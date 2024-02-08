@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Spy</title>
+    <style>
+      @font-face {
+        font-family: Rustic;
+        src: url("../static/fonts/RusticFont.ttf");
+      }
+
+      @font-face {
+        font-family: WowFont;
+        src: url("../static/fonts/ofont.ru_Rosarium.ttf");
+      }
+
+      body {
+        background-color: #141414;
+        padding-bottom: 2rem;
+        transition: background-color 0.5s;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      p {
+        color: white;
+        font-family: WowFont, serif;
+        font-size: 6rem;
+        margin: 0 0 1rem;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24rem;
+        min-height: 60vh;
+        justify-content: center;
+        text-align: center;
+        margin-top: 16rem;
+        width: 80%;
+        background-color: #690404;
+        border-radius: 30px;
+        margin-left: auto;
+        margin-right: auto;
+        transform: 0.8s;
+        transform-style: preserve-3d;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        transition: min-height 0.3s, margin-top 0.3s, border-radius 0.3s;
+      }
+
+      button {
+        position: absolute;
+        font-size: 8rem;
+        background: none;
+        border: none;
+        color: white;
+        font-family: WowFont, serif;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #word {
+        position: absolute;
+        font-size: 5rem;
+        font-family: Arial, serif;
+        width: 75%;
+        transition: color 0.3s;
+      }
+
+      a {
+        position: absolute;
+        left: 4rem;
+        top: 4rem;
+        color: white;
+        font-family: WowFont, serif;
+        font-size: 6rem;
+        text-decoration: none;
+        z-index: 1;
+      }
+
+      span {
+        font-size: 2.5rem;
+      }
+    </style>
+  </head>
+  <body onload="next_player(); change_theme(1);">
+    <a href="/">Назад</a>
+    <div onclick="next_player()" class="container">
+      <p id="word">Pop</p>
+      <form id="the_form" style="display: none" action="{{ url_for('start_time') }}" method="get"></form>
+    </div>
+    <script>
+      var theme = "";
+
+      function change_theme(choice = 0) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            theme = this.responseText;
+            if (theme === "dark") {
+              body.style.backgroundColor = "#141414";
+              document.getElementsByTagName("div")[0].style.borderColor = "#690404";
+              document.getElementsByTagName("div")[0].style.backgroundColor = "#474747";
+            } else if (theme === "light") {
+              body.style.backgroundColor = "#00B4D8";
+              document.getElementsByTagName("div")[0].style.borderColor = "white";
+              document.getElementsByTagName("div")[0].style.backgroundColor = "#1e2f97";
+            }
+          }
+        };
+        let body = document.getElementsByTagName("body")[0];
+        if (choice === 0) {
+          xmlhttp.open("GET", `/change_spy_theme`, true);
+          xmlhttp.send();
+        } else {
+          xmlhttp.open("GET", `/get_spy_theme`, true);
+          xmlhttp.send();
+        }
+      }
+
+      function myFunc(vars) {
+        return vars
+      }
+      let names = Object.values(JSON.parse(myFunc('{{ names|tojson }}')));
+      let spy_name = "{{ spy }}"; // alert(spy_name); let div = document.getElementsByTagName("div")[0]; let word = document.getElementById("word"); let i = 0; let j = 0; function next_player(){ if(i === names.length){ document.getElementById("the_form").submit(); return; } if(j === 0){ div.style.minHeight = "60vh"; div.style.marginTop = "16rem"; div.style.borderRadius = "30px"; word.innerHTML = names[i]; word.style.color = "white"; j = 1; return; } else { div.style.minHeight = "45vh"; div.style.marginTop = "24rem"; div.style.borderRadius = "60px"; if(spy_name.includes(names[i])){ word.style.color = "red"; word.innerHTML = "Вы шпион"; } else { word.style.color = "white"; word.innerHTML = "
+      < span > Слово: < /span> < br > " + " {
+        {
+          word
+        }
+      }
+      "; } i++; j = 0; return; } } 
+    </script>
+  </body>
+</html>
