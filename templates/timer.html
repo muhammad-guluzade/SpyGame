@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Spy</title>
+    <style>
+      @font-face {
+        font-family: WowFont;
+        src: url("../static/fonts/WowFontFont.ttf");
+      }
+
+      @font-face {
+        font-family: WowFont;
+        src: url("../static/fonts/ofont.ru_Rosarium.ttf");
+      }
+
+      body {
+        background-color: #141414;
+        padding-bottom: 2rem;
+        transition: background-color 0.5s;
+      }
+
+      p {
+        color: #690404;
+        font-family: WowFont, serif;
+        font-size: 20rem;
+        margin: 0 0 1rem;
+        transition: color 0.5s;
+      }
+
+      a {
+        color: #DB1212;
+        font-family: WowFont, serif;
+        font-style: italic;
+        font-size: 5rem;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
+      }
+
+      a {
+        position: absolute;
+        left: 4rem;
+        top: 8rem;
+        color: white;
+        font-family: WowFont, serif;
+        font-size: 6rem;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body onload="change_theme(1);">
+    <a href="/">Начать сначала</a>
+    <div class="container">
+      <p></p>
+    </div>
+    <script>
+      var theme = "";
+
+      function change_theme(choice = 0) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            theme = this.responseText;
+            if (theme === "dark") {
+              body.style.backgroundColor = "#141414";
+              timer.style.color = "#690404";
+            } else if (theme === "light") {
+              body.style.backgroundColor = "#00B4D8";
+              timer.style.color = "white";
+            }
+          }
+        };
+        let body = document.getElementsByTagName("body")[0];
+        if (choice === 0) {
+          xmlhttp.open("GET", `/change_spy_theme`, true);
+          xmlhttp.send();
+        } else {
+          xmlhttp.open("GET", `/get_spy_theme`, true);
+          xmlhttp.send();
+        }
+      }
+      let time = parseInt("{{ time }}");
+      let timer = document.getElementsByTagName("p")[0];
+      let audio = new Audio("static/time.mp3");
+
+      function manage_time() {
+        if (time === 0) {
+          timer.innerHTML = "{{ spy }}";
+          audio.play();
+          clearInterval(interval);
+          return;
+        }
+        let minutes = "";
+        let seconds = "";
+        if (time / 60 >= 10) {
+          minutes = `${Math.floor(time / 60)}`;
+        } else {
+          minutes = `0${Math.floor(time / 60)}`;
+        }
+        if ((time - Math.floor(time / 60) * 60) >= 10) {
+          seconds = `${(time - Math.floor(time / 60) * 60)}`;
+        } else {
+          seconds = `0${(time - Math.floor(time / 60) * 60)}`;
+        }
+        timer.innerHTML = `${minutes}:${seconds}`;
+        time--;
+      }
+      let interval = setInterval(manage_time, 1000);
+    </script>
+  </body>
+</html>
